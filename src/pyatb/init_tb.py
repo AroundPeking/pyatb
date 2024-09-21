@@ -1,6 +1,6 @@
 import numpy as np
 from pyatb.tb import tb
-from pyatb.io.abacus_read_xr import abacus_readHR, abacus_readSR, abacus_readrR
+from pyatb.io.abacus_read_xr import abacus_readHR, abacus_readSR, abacus_readrR, abacus_readpR
 
 
 def init_tb(
@@ -16,6 +16,9 @@ def init_tb(
     need_rR = False,
     rR_route = 'data-rR-sparse.csr',
     rR_unit = 'Angstrom',
+    pR_route = 'data-pR-sparse_SPIN0.csr',
+    pR_unit = 'eV',
+    need_pR = False,
     **kwarg
 ):
     m_tb = tb(nspin, lattice_constant, lattice_vector, max_kpoint_num)
@@ -34,6 +37,8 @@ def init_tb(
 
         if need_rR:
             rR = abacus_readrR(rR_route, rR_unit)
+        if need_pR:
+            pR = abacus_readpR(pR_route, pR_unit)
 
     if nspin != 2:
         m_tb.set_solver_HSR(HR, SR, isSparse)
@@ -41,6 +46,9 @@ def init_tb(
         m_tb.set_solver_HSR_spin2(HR_up, HR_dn, SR, isSparse)
 
     if need_rR:
-        m_tb.set_solver_rR(rR[0], rR[1], rR[2], isSparse)
+        m_tb.set_solver_rR(rR[0], rR[1], rR[2], isSparse) 
+        
+    if need_pR:
+        m_tb.set_solver_pR(pR[0], pR[1], pR[2], isSparse) 
 
     return m_tb

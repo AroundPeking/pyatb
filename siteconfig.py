@@ -1,8 +1,5 @@
 compiler = 'icpc'
 
-mkl_library_dir = '/opt/intel/oneapi/mkl/2022.0.2/lib/intel64/'
-
-mkl_include_dir = '/opt/intel/oneapi/mkl/2022.0.2/include/'
-
-eigen_include_dir = '/usr/local/include/eigen3/'
-
+mkl_include_dir = '/home/ghj/app/miniconda3/envs/pyatb/include' #None
+mkl_library_dir = '/home/ghj/app/miniconda3/envs/pyatb/lib' #None
+eigen_include_dir = '/home/ghj/app/eigen-3.4.0/build/include/eigen3'

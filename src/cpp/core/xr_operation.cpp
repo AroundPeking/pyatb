@@ -2,12 +2,11 @@
 
 // Hk = \sum_{R} e^{i \mathbf{k} \cdot \mathbf{R}} HR
 MatrixXcd xr_operation::get_Hk(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR
-)
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR)
 {
     MatrixXcd Hk;
-    
+
     if (Base_Data.use_XR_sparse)
     {
         Hk = Base_Data.get_Xk_triu_sparse(exp_ikR, Base_Data.HR_upperTriangleOfSparseMatrix);
@@ -21,15 +20,13 @@ MatrixXcd xr_operation::get_Hk(
     return Hk;
 }
 
-
 // Sk = \sum_{R} e^{i \mathbf{k} \cdot \mathbf{R}} SR
 MatrixXcd xr_operation::get_Sk(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR
-)
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR)
 {
     MatrixXcd Sk;
-    
+
     if (Base_Data.use_XR_sparse)
     {
         Sk = Base_Data.get_Xk_triu_sparse(exp_ikR, Base_Data.SR_upperTriangleOfSparseMatrix);
@@ -38,18 +35,16 @@ MatrixXcd xr_operation::get_Sk(
     {
         Sk = Base_Data.get_Xk_triu(exp_ikR, Base_Data.SR_upperTriangleOfDenseMatrix);
     }
- 
+
     Sk = Sk.selfadjointView<Upper>();
     return Sk;
 }
 
-
 // \partial_{k_\alpha} Hk = \sum_{R} i R_\alpha e^{i \mathbf{k} \cdot \mathbf{R}} HR
 MatrixXcd xr_operation::get_partial_Hk(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR, 
-    const int &partial_alpha
-)
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR,
+    const int &partial_alpha)
 {
     MatrixXcd partial_Hk;
 
@@ -66,13 +61,11 @@ MatrixXcd xr_operation::get_partial_Hk(
     return partial_Hk;
 }
 
-
 // \partial_{k_\alpha} Sk = \sum_{R} i R_\alpha e^{i \mathbf{k} \cdot \mathbf{R}} SR
 MatrixXcd xr_operation::get_partial_Sk(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR, 
-    const int &partial_alpha
-)
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR,
+    const int &partial_alpha)
 {
     MatrixXcd partial_Sk;
 
@@ -89,13 +82,11 @@ MatrixXcd xr_operation::get_partial_Sk(
     return partial_Sk;
 }
 
-
 MatrixXcd xr_operation::get_partial2_Hk(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR, 
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR,
     const int &partial_alpha,
-    const int &partial_beta
-)
+    const int &partial_beta)
 {
     MatrixXcd partial2_Hk;
     if (Base_Data.use_XR_sparse)
@@ -112,11 +103,10 @@ MatrixXcd xr_operation::get_partial2_Hk(
 }
 
 MatrixXcd xr_operation::get_partial2_Sk(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR, 
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR,
     const int &partial_alpha,
-    const int &partial_beta
-)
+    const int &partial_beta)
 {
     MatrixXcd partial2_Sk;
     if (Base_Data.use_XR_sparse)
@@ -132,13 +122,11 @@ MatrixXcd xr_operation::get_partial2_Sk(
     return partial2_Sk;
 }
 
-
 // rk = \sum_{R} e^{i \mathbf{k} \cdot \mathbf{R}} rR_\alpha
 MatrixXcd xr_operation::get_rk(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR, 
-    const int &alpha
-)
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR,
+    const int &alpha)
 {
     MatrixXcd rk;
     MatrixXcd partial_Sk;
@@ -158,14 +146,33 @@ MatrixXcd xr_operation::get_rk(
     return rk;
 }
 
+// pk = -i\sum_{R} e^{i \mathbf{k} \cdot \mathbf{R}} pR_\alpha
+MatrixXcd xr_operation::get_pk(
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR,
+    const int &alpha)
+{
+    MatrixXcd pk;
+
+    if (Base_Data.use_XR_sparse)
+    {
+        pk = Base_Data.get_Xk_triu_sparse(exp_ikR, Base_Data.pR_upperTriangleOfSparseMatrix[alpha]);
+    }
+    else
+    {
+        pk = Base_Data.get_Xk_triu(exp_ikR, Base_Data.pR_upperTriangleOfDenseMatrix[alpha]);
+    }
+
+    pk.triangularView<Lower>() = (-pk).adjoint();
+    return pk;
+}
 
 // rk = \sum_{R} e^{i \mathbf{k} \cdot \mathbf{R}} rR_\alpha
 MatrixXcd xr_operation::get_rk_S(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR, 
-    const MatrixXcd &partial_alpha_Sk, 
-    const int &alpha
-)
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR,
+    const MatrixXcd &partial_alpha_Sk,
+    const int &alpha)
 {
     MatrixXcd rk;
 
@@ -182,14 +189,12 @@ MatrixXcd xr_operation::get_rk_S(
     return rk;
 }
 
-
 // \partial_{k_\alpha} rR_\beta = \sum_{R} i R_\alpha e^{i \mathbf{k} \cdot \mathbf{R}} rR_\beta
 MatrixXcd xr_operation::get_partial_rk(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR, 
-    const int &partial_alpha, 
-    const int &beta
-)
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR,
+    const int &partial_alpha,
+    const int &beta)
 {
     MatrixXcd partial_rk;
     MatrixXcd partial_alpha_beta_Sk;
@@ -209,15 +214,13 @@ MatrixXcd xr_operation::get_partial_rk(
     return partial_rk;
 }
 
-
 // \partial_{k_\alpha} rR_\beta = \sum_{R} i R_\alpha e^{i \mathbf{k} \cdot \mathbf{R}} rR_\beta
 MatrixXcd xr_operation::get_partial_rk_S(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR, 
-    const MatrixXcd &partial_alpha_beta_Sk, 
-    const int &partial_alpha, 
-    const int &beta
-)
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR,
+    const MatrixXcd &partial_alpha_beta_Sk,
+    const int &partial_alpha,
+    const int &beta)
 {
     MatrixXcd partial_rk;
 
@@ -234,30 +237,22 @@ MatrixXcd xr_operation::get_partial_rk_S(
     return partial_rk;
 }
 
-
 // \Omega_{extra} = \sum_{R} e^{i \mathbf{k} \cdot \mathbf{R}} \left( i R_\alpha rR_\beta - i R_\beta rR_\alpha \right)
 MatrixXcd xr_operation::get_Omega_extra(
-    base_data &Base_Data, 
-    const VectorXcd &exp_ikR, 
-    const int &alpha, 
-    const int &beta
-)
+    base_data &Base_Data,
+    const VectorXcd &exp_ikR,
+    const int &alpha,
+    const int &beta)
 {
     VectorXcd Omega_extra_upperTriangleOfDenseMatrix;
 
     if (Base_Data.use_XR_sparse)
     {
-        Omega_extra_upperTriangleOfDenseMatrix = IMAG_UNIT * exp_ikR.transpose() * (   
-                Base_Data.R_cartesian_coor.col(alpha).asDiagonal() * Base_Data.rR_upperTriangleOfSparseMatrix[beta]
-              - Base_Data.R_cartesian_coor.col(beta).asDiagonal() * Base_Data.rR_upperTriangleOfSparseMatrix[alpha]
-            );
+        Omega_extra_upperTriangleOfDenseMatrix = IMAG_UNIT * exp_ikR.transpose() * (Base_Data.R_cartesian_coor.col(alpha).asDiagonal() * Base_Data.rR_upperTriangleOfSparseMatrix[beta] - Base_Data.R_cartesian_coor.col(beta).asDiagonal() * Base_Data.rR_upperTriangleOfSparseMatrix[alpha]);
     }
     else
     {
-        Omega_extra_upperTriangleOfDenseMatrix = IMAG_UNIT * exp_ikR.transpose() * (   
-                Base_Data.R_cartesian_coor.col(alpha).asDiagonal() * Base_Data.rR_upperTriangleOfDenseMatrix[beta]
-              - Base_Data.R_cartesian_coor.col(beta).asDiagonal() * Base_Data.rR_upperTriangleOfDenseMatrix[alpha]
-            );
+        Omega_extra_upperTriangleOfDenseMatrix = IMAG_UNIT * exp_ikR.transpose() * (Base_Data.R_cartesian_coor.col(alpha).asDiagonal() * Base_Data.rR_upperTriangleOfDenseMatrix[beta] - Base_Data.R_cartesian_coor.col(beta).asDiagonal() * Base_Data.rR_upperTriangleOfDenseMatrix[alpha]);
     }
 
     MatrixXcd Omega_extra = tools::convert_tril(Base_Data.basis_num, Omega_extra_upperTriangleOfDenseMatrix);
@@ -266,12 +261,10 @@ MatrixXcd xr_operation::get_Omega_extra(
     return Omega_extra;
 }
 
-
 MatrixXcd xr_operation::inner_product_twoPoints(
-    base_data &Base_Data, 
-    const VectorXd &k_direct_coor_start, 
-    const VectorXd &k_direct_coor_end
-)
+    base_data &Base_Data,
+    const VectorXd &k_direct_coor_start,
+    const VectorXd &k_direct_coor_end)
 {
     Vector3d delta_k = k_direct_coor_end - k_direct_coor_start;
     Vector3d G(round(delta_k(0)), round(delta_k(1)), round(delta_k(2)));
@@ -287,7 +280,7 @@ MatrixXcd xr_operation::inner_product_twoPoints(
     }
 
     MatrixXcd inner_product = MatrixXcd::Zero(Base_Data.basis_num, Base_Data.basis_num);
-    
+
     VectorXd fac = delta_k.transpose() * Base_Data.basis_center_position_direct.transpose() * PI;
     Vector3d delta_k_cartesian_coor = delta_k.transpose() * Base_Data.reciprocal_vector * TWO_PI / Base_Data.lattice_constant;
 
@@ -296,10 +289,7 @@ MatrixXcd xr_operation::inner_product_twoPoints(
         for (int col = 0; col < Base_Data.basis_num; ++col)
         {
             double fac1 = fac(row) + fac(col);
-            inner_product(row, col) = (1.0 + IMAG_UNIT * fac1) * Sk(row, col)
-                                        + delta_k_cartesian_coor(0) * (0.5 * partial_Sk[0](row, col) - IMAG_UNIT * rk[0](row, col))
-                                        + delta_k_cartesian_coor(1) * (0.5 * partial_Sk[1](row, col) - IMAG_UNIT * rk[1](row, col))
-                                        + delta_k_cartesian_coor(2) * (0.5 * partial_Sk[2](row, col) - IMAG_UNIT * rk[2](row, col));
+            inner_product(row, col) = (1.0 + IMAG_UNIT * fac1) * Sk(row, col) + delta_k_cartesian_coor(0) * (0.5 * partial_Sk[0](row, col) - IMAG_UNIT * rk[0](row, col)) + delta_k_cartesian_coor(1) * (0.5 * partial_Sk[1](row, col) - IMAG_UNIT * rk[1](row, col)) + delta_k_cartesian_coor(2) * (0.5 * partial_Sk[2](row, col) - IMAG_UNIT * rk[2](row, col));
             inner_product(row, col) = inner_product(row, col) * exp(-1.0 * IMAG_UNIT * fac1);
         }
     }
@@ -307,21 +297,19 @@ MatrixXcd xr_operation::inner_product_twoPoints(
     return inner_product;
 }
 
-
 std::vector<MatrixXcd> xr_operation::inner_product_along_loop(
-    base_data &Base_Data, 
-    const MatrixXd &k_direct_coor_loop
-)
+    base_data &Base_Data,
+    const MatrixXd &k_direct_coor_loop)
 {
     const int kpoint_num = k_direct_coor_loop.rows();
     std::vector<MatrixXcd> inner_product(kpoint_num);
 
-    #pragma omp parallel for schedule(static)
+#pragma omp parallel for schedule(static)
     for (int ik = 0; ik < kpoint_num; ik++)
     {
         if (ik != kpoint_num - 1)
         {
-            inner_product[ik] = xr_operation::inner_product_twoPoints(Base_Data, k_direct_coor_loop.row(ik), k_direct_coor_loop.row(ik+1));
+            inner_product[ik] = xr_operation::inner_product_twoPoints(Base_Data, k_direct_coor_loop.row(ik), k_direct_coor_loop.row(ik + 1));
         }
         else
         {
@@ -332,15 +320,13 @@ std::vector<MatrixXcd> xr_operation::inner_product_along_loop(
     return inner_product;
 }
 
-
 void xr_operation::Fourier_R_to_k_SurfaceState_bulk_Xk(
     base_data &Base_Data,
     const int &direction,
     const MatrixXd &k_direct_coor,
     const int &coupling_layers,
     std::vector<MatrixXcd> &bulk_Xk,
-    const MatrixXcd &XR_upperTriangleOfDenseMatrix
-)
+    const MatrixXcd &XR_upperTriangleOfDenseMatrix)
 {
     const int kpoint_num = k_direct_coor.rows();
     int basis_num = Base_Data.get_basis_num();
@@ -362,12 +348,12 @@ void xr_operation::Fourier_R_to_k_SurfaceState_bulk_Xk(
         a = 1;
         b = 2;
     }
-    else if(direction == 1)
+    else if (direction == 1)
     {
         a = 0;
         b = 2;
     }
-    else if(direction == 2)
+    else if (direction == 2)
     {
         a = 0;
         b = 1;
@@ -382,17 +368,14 @@ void xr_operation::Fourier_R_to_k_SurfaceState_bulk_Xk(
             {
                 for (int ik = 0; ik < kpoint_num; ++ik)
                 {
-                    double kR = k_direct_coor(ik, a) *  temp_R_direct_coor(i, a) + k_direct_coor(ik, b) *  temp_R_direct_coor(i, b);
-                    bulk_Xk[iR_coor+max_coupling_R].row(ik) += std::exp(IMAG_UNIT * TWO_PI * kR) * XR_upperTriangleOfDenseMatrix.row(i);
-                    
+                    double kR = k_direct_coor(ik, a) * temp_R_direct_coor(i, a) + k_direct_coor(ik, b) * temp_R_direct_coor(i, b);
+                    bulk_Xk[iR_coor + max_coupling_R].row(ik) += std::exp(IMAG_UNIT * TWO_PI * kR) * XR_upperTriangleOfDenseMatrix.row(i);
                 }
                 count++;
             }
         }
     }
-
 }
-
 
 void xr_operation::SurfaceState_Xk(
     base_data &Base_Data,
@@ -401,8 +384,7 @@ void xr_operation::SurfaceState_Xk(
     const int &coupling_layers,
     const char &X,
     std::vector<MatrixXcd> &Xk00,
-    std::vector<MatrixXcd> &Xk01
-)
+    std::vector<MatrixXcd> &Xk01)
 {
     const int kpoint_num = k_direct_coor.rows();
     int basis_num = Base_Data.get_basis_num();
@@ -439,17 +421,16 @@ void xr_operation::SurfaceState_Xk(
                 {
                     for (int col = row; col < basis_num; ++col)
                     {
-                        tem_block00(row, col) = bulk_Xk[iR_coor00+max_coupling_R](ik, count);
-                        tem_block00(col, row) = conj(bulk_Xk[-iR_coor00+max_coupling_R](ik, count));
-                        tem_block01(row, col) = bulk_Xk[iR_coor01+max_coupling_R](ik, count);
-                        tem_block01(col, row) = conj(bulk_Xk[-iR_coor01+max_coupling_R](ik, count));
+                        tem_block00(row, col) = bulk_Xk[iR_coor00 + max_coupling_R](ik, count);
+                        tem_block00(col, row) = conj(bulk_Xk[-iR_coor00 + max_coupling_R](ik, count));
+                        tem_block01(row, col) = bulk_Xk[iR_coor01 + max_coupling_R](ik, count);
+                        tem_block01(col, row) = conj(bulk_Xk[-iR_coor01 + max_coupling_R](ik, count));
                         count++;
                     }
                 }
-                Xk00[ik].block(row_block*basis_num, col_block*basis_num, basis_num, basis_num) = tem_block00;
-                Xk01[ik].block(row_block*basis_num, col_block*basis_num, basis_num, basis_num) = tem_block01;
+                Xk00[ik].block(row_block * basis_num, col_block * basis_num, basis_num, basis_num) = tem_block00;
+                Xk01[ik].block(row_block * basis_num, col_block * basis_num, basis_num, basis_num) = tem_block01;
             }
         }
     }
-   
 }

@@ -119,6 +119,43 @@ class tb:
                 self.tb_solver_up.set_rR(temp_rR_x, temp_rR_y, temp_rR_z)
                 self.tb_solver_dn.set_rR(temp_rR_x, temp_rR_y, temp_rR_z)
 
+    def set_solver_pR(self, pR_x, pR_y, pR_z, isSparse=False):
+        try:
+            self.HSR_iSsparse
+        except NameError:
+            print('set_solver_pR() must be executed after set_solver_HSR_ function() or set_solver_HSR_spin2()')
+
+        if self.HSR_iSsparse != isSparse:
+            raise ValueError('isSparse must be consistent for pR and HSR')
+
+        # Check whether HR and pR are consistent
+        if pR_x.des != 'p_x' or pR_y.des != 'p_y' or pR_z.des != 'p_z':
+            raise ValueError('pR parameter error !!')
+        if not (pR_x.R_direct_coor == self.R_direct_coor).all():
+            raise ValueError('HR and pR_x mismatch !!')
+        if not (pR_y.R_direct_coor == self.R_direct_coor).all():
+            raise ValueError('HR and pR_y mismatch !!')
+        if not (pR_z.R_direct_coor == self.R_direct_coor).all():
+            raise ValueError('HR and pR_z mismatch !!')
+        if pR_x.basis_num != self.basis_num or pR_y.basis_num != self.basis_num or pR_z.basis_num != self.basis_num:
+            raise ValueError('HR and pR mismatch !!')
+
+        if isSparse:
+            if self.nspin != 2:
+                self.tb_solver.set_pR_sparse(pR_x.XR, pR_y.XR, pR_z.XR)
+            else:
+                self.tb_solver_up.set_pR_sparse(pR_x.XR, pR_y.XR, pR_z.XR)
+                self.tb_solver_dn.set_pR_sparse(pR_x.XR, pR_y.XR, pR_z.XR)
+        else:
+            temp_pR_x = pR_x.XR.toarray()
+            temp_pR_y = pR_y.XR.toarray()
+            temp_pR_z = pR_z.XR.toarray()
+            if self.nspin != 2:
+                self.tb_solver.set_pR(temp_pR_x, temp_pR_y, temp_pR_z)
+            else:
+                self.tb_solver_up.set_pR(temp_pR_x, temp_pR_y, temp_pR_z)
+                self.tb_solver_dn.set_pR(temp_pR_x, temp_pR_y, temp_pR_z)
+
     def direct_to_cartesian_kspace(self, k_direct_coor):
         """
 

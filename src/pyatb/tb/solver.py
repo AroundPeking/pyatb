@@ -20,6 +20,12 @@ class solver:
 
     def set_rR_sparse(self, rR_x, rR_y, rR_z):
         self.tb_solver.set_rR_sparse(rR_x, rR_y, rR_z)
+        
+    def set_pR(self, pR_x, pR_y, pR_z):
+        self.tb_solver.set_pR(pR_x, pR_y, pR_z)
+
+    def set_pR_sparse(self, pR_x, pR_y, pR_z):
+        self.tb_solver.set_pR_sparse(pR_x, pR_y, pR_z)
 
     def set_single_atom_position(self, atom_label, na, tau_car):
         self.tb_solver.set_single_atom_position(atom_label, na, tau_car)
@@ -100,6 +106,14 @@ class solver:
         self.tb_solver.get_velocity_matrix(k_direct_coor, eigenvalues, velocity_matrix)
 
         return eigenvalues, velocity_matrix
+    
+    def get_pk_matrix(self, k_direct_coor):
+        kpoint_num = k_direct_coor.shape[0]
+        eigenvalues = np.zeros([kpoint_num, self.basis_num], dtype=float)
+        pk_matrix = np.zeros([kpoint_num, 3, self.basis_num, self.basis_num], dtype=complex)
+        self.tb_solver.get_pk_matrix(k_direct_coor, eigenvalues, pk_matrix)
+
+        return eigenvalues, pk_matrix
 
     def get_bandunfolding(self, M_matrix, kvect_direct, ecut, min_bandindex, max_bandindex, nspin):
         kpoint_num = kvect_direct.shape[0]

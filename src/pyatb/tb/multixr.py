@@ -5,7 +5,7 @@ from scipy.sparse import csc_matrix
 
 class multiXR:
     """
-    Class for holding XR (eg HR, SR, rR) matrices.
+    Class for holding XR (eg HR, SR, rR, pR) matrices.
 
     Attributes
     ----------
@@ -13,7 +13,7 @@ class multiXR:
         Describe the type of multiXR.
 
     des : str
-        One of 'H', 'S', 'r_x', 'r_y', 'r_z'.
+        One of 'H', 'S', 'r_x', 'r_y', 'r_z', 'p_x', 'p_y', 'p_z'.
 
     R_num : int
         The number of R indicators.
@@ -25,18 +25,18 @@ class multiXR:
         Matrix dimension of XR.
 
     XR : scipy.sparse.csc_matrix
-        shape=(R_num, (basis_num + 1)*basis_num / 2). Data of HR or SR or rR. Each row of the sparse matrix corresponds to the upper triangular 
+        shape=(R_num, (basis_num + 1)*basis_num / 2). Data of HR or SR or rR or pR. Each row of the sparse matrix corresponds to the upper triangular 
         part of each X[R]. XR's unit is eV for HR, is angstrom for rR.
     """
 
-    XR_des = ('H', 'S', 'r_x', 'r_y', 'r_z')
+    XR_des = ('H', 'S', 'r_x', 'r_y', 'r_z', 'p_x', 'p_y', 'p_z')
 
     def __init__(self, des):
         # Is it HR, SR, or rR
         if des in multiXR.XR_des:
             self.des = des
         else:
-            raise ValueError("multiXR des must be one of 'H', 'S', 'r_x', 'r_y', 'r_z'")
+            raise ValueError("multiXR des must be one of 'H', 'S', 'r_x', 'r_y', 'r_z', 'p_x', 'p_y', 'p_z'")
         
     def set_XR(self, R_num, R_direct_coor, basis_num, XR):
         """

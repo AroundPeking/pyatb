@@ -7,9 +7,6 @@ import pybind11
 from pybind11.setup_helpers import Pybind11Extension
 
 compiler = 'icpc'
-mkl_include_dir = None
-mkl_library_dir = None
-eigen_include_dir = None
 
 include_dirs = []
 library_dirs = []
