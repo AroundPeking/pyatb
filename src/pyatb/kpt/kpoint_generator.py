@@ -80,15 +80,16 @@ class mp_generator:
 
         total_count = 0
         count = 0
-        for x in range(grid[0]):
+        for z in range(grid[2]):
             for y in range(grid[1]):
-                for z in range(grid[2]):
+                for x in range(grid[0]):
                     total_count = total_count + 1
                     if total_count > self.current_kpoint_num:
                         if count == self.max_kpoint_num:
                             self.current_kpoint_num = self.current_kpoint_num + count
                             return k_direct_coor
                         k_direct_coor[count] = self.k_start + self.k_vect1 * (x/grid[0]) + self.k_vect2 * (y/grid[1]) + self.k_vect3 * (z/grid[2])
+                        print(k_direct_coor[count])
                         count = count + 1
         self.current_kpoint_num = self.current_kpoint_num + count
         return k_direct_coor

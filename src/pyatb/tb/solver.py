@@ -102,10 +102,11 @@ class solver:
     def get_velocity_matrix(self, k_direct_coor):
         kpoint_num = k_direct_coor.shape[0]
         eigenvalues = np.zeros([kpoint_num, self.basis_num], dtype=float)
+        eigenvectors = np.zeros([kpoint_num, self.basis_num, self.basis_num], dtype=complex)
         velocity_matrix = np.zeros([kpoint_num, 3, self.basis_num, self.basis_num], dtype=complex)
-        self.tb_solver.get_velocity_matrix(k_direct_coor, eigenvalues, velocity_matrix)
+        self.tb_solver.get_velocity_matrix(k_direct_coor, eigenvalues, eigenvectors, velocity_matrix)
 
-        return eigenvalues, velocity_matrix
+        return eigenvalues, eigenvectors, velocity_matrix
     
     def get_pk_matrix(self, k_direct_coor):
         kpoint_num = k_direct_coor.shape[0]

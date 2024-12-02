@@ -181,6 +181,7 @@ public:
     void get_velocity_matrix(
         const MatrixXd &k_direct_coor,
         py::array_t<double> &eigenvalues,
+        py::array_t<std::complex<double>> &eigenvectors,
         py::array_t<std::complex<double>> &velocity_matrix);
 
     void get_pk_matrix(

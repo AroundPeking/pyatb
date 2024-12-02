@@ -634,9 +634,11 @@ void interface_python::get_shift_current(
 void interface_python::get_velocity_matrix(
     const MatrixXd &k_direct_coor,
     py::array_t<double> &eigenvalues,
+    py::array_t<std::complex<double>> &eigenvectors,
     py::array_t<std::complex<double>> &velocity_matrix)
 {
     auto eigenvalues_data = eigenvalues.mutable_unchecked<2>();
+    auto eigenvectors_data = eigenvectors.mutable_unchecked<3>();
     auto velocity_matrix_data = velocity_matrix.mutable_unchecked<4>();
     const int kpoint_num = k_direct_coor.rows();
     MatrixXcd exp_ikR = Base_Data.get_exp_ikR(k_direct_coor);
@@ -656,6 +658,10 @@ void interface_python::get_velocity_matrix(
         for (int row = 0; row < Base_Data.basis_num; ++row)
         {
             eigenvalues_data(ik, row) = temp_eigenvalues(row);
+            for (int col = 0; col < Base_Data.basis_num; ++col)
+            {
+                eigenvectors_data(ik, row, col) = temp_eigenvectors(row, col);
+            }
         }
 
         for (int a = 0; a < 3; ++a)

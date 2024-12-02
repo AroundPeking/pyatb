@@ -146,7 +146,7 @@ class Drude_Weight:
         dw_pl = np.zeros([kpoint_num,int(E_num),9],dtype = float)
         
         
-        eigenvalues,velocity_matrix = self.__tb_solver.get_velocity_matrix(k_direct_coor)
+        eigenvalues, eigenvectors, velocity_matrix = self.__tb_solver.get_velocity_matrix(k_direct_coor)
         
         
         #print('Rank %d calculate velocity matrix, time cost: %f'%(RANK,(end-start)))

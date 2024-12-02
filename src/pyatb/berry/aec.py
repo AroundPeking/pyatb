@@ -96,7 +96,7 @@ class AEC:
             k_num = ik_process.k_direct_coor_local.shape[0]
 
             if k_num:
-                eigenvalues, velocity_matrix = self.__tb_solver.get_velocity_matrix(ik_process.k_direct_coor_local)
+                eigenvalues, eigenvectors, velocity_matrix = self.__tb_solver.get_velocity_matrix(ik_process.k_direct_coor_local)
 
             berrycurvature_tot_k = np.zeros([k_num, omega_num, 3], dtype=float)
             berrycurrvature_k_0 = np.zeros([k_num, basis_num], dtype=float)
